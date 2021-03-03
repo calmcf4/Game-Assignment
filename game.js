@@ -110,8 +110,33 @@ const move = () => {
 
 }
 
+const startGame = () => {
+	const start = document.querySelector('.start');
+	start.style.opacity = 0;
+	setInterval(bombDrop, 50);
+}
+
+
+const bombDrop = () => {
+	let bomb = document.querySelectorAll('.bomb');
+	for (let i = 0; i < bomb.length; i++) {
+		let random = Math.floor(Math.random() * 10) + 1;
+		for (let j = 0; j < random; j++) {
+			let bombTop = bomb[i].offsetTop;
+			bomb[i].style.top = bombTop + 1 + 'px';
+		}
+	}
+}
 
 const myLoadFunction = () => {
+	let bomb = document.querySelectorAll('.bomb');
+	for (let i = 0; i < bomb.length; i++) {
+		let bombLeft = bomb[i].offsetLeft;							//Sets the bombs to a random position
+		let randomLeft = Math.floor(Math.random() * 1920);
+		bomb[i].style.left = bombLeft + randomLeft + 'px';
+	}
+	const start = document.querySelector('.start');
+	start.addEventListener('click', startGame);
 	timeout = setInterval(move, 10);
 	document.addEventListener('keydown', keydown);
 	document.addEventListener('keyup', keyup);
