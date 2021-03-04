@@ -56,12 +56,12 @@ const keyup = (event) => {
 
 const move = () => {
 	const player = document.getElementById('player');
-	let positionLeft = player.offsetLeft;
-	let positionTop = player.offsetTop;
+	const positionLeft = player.offsetLeft;
+	const positionTop = player.offsetTop;
 	if (downPressed) {
-		let newDown = positionTop + 1;
+		const newDown = positionTop + 1;
 
-		let sky = document.elementFromPoint(player.offsetLeft, newDown + 32);
+		const sky = document.elementFromPoint(player.offsetLeft, newDown + 32);
 		if (sky.classList.contains('sky') == false) {
 			player.style.top = newDown + 'px';
 		}
@@ -73,9 +73,9 @@ const move = () => {
 		}
 	}
 	if (upPressed) {
-		let newTop = positionTop - 1;
+		const newTop = positionTop - 1;
 
-		let sky = document.elementFromPoint(player.offsetLeft, newTop);
+		const sky = document.elementFromPoint(player.offsetLeft, newTop);
 		if (sky.classList.contains('sky') == false) {
 			player.style.top = newTop + 'px';
 		}
@@ -87,9 +87,9 @@ const move = () => {
 		}
 	}
 	if (leftPressed) {
-		let newLeft = positionLeft - 1;
+		const newLeft = positionLeft - 1;
 
-		let sky = document.elementFromPoint(newLeft, player.offsetTop);
+		const sky = document.elementFromPoint(newLeft, player.offsetTop);
 		if (sky.classList.contains('sky') == false) {
 			player.style.left = newLeft + 'px';
 		}
@@ -98,9 +98,9 @@ const move = () => {
 		player.className = 'character walk left';
 	}
 	if (rightPressed) {
-		let newRight = positionLeft + 1;
+		const newRight = positionLeft + 1;
 
-		let sky = document.elementFromPoint(newRight + 32, player.offsetTop);
+		const sky = document.elementFromPoint(newRight + 32, player.offsetTop);
 		if (sky.classList.contains('sky') == false) {
 			player.style.left = newRight + 'px';
 		}
@@ -113,26 +113,46 @@ const move = () => {
 const startGame = () => {
 	const start = document.querySelector('.start');
 	start.style.opacity = 0;
+	setInterval(bombCreate, 1000);
 	setInterval(bombDrop, 50);
+	setInterval(bombExplode, 50);
 }
 
+const bombCreate = () => {
+	const bomb = document.createElement("li");
+	bomb.className = "bomb";
+	document.body.appendChild(bomb);
+	const bombLeft = bomb.offsetLeft;
+	const randomLeft = Math.floor(Math.random() * 1920);
+	bomb.style.left = bombLeft + randomLeft + 'px';
+}
 
 const bombDrop = () => {
-	let bomb = document.querySelectorAll('.bomb');
-	for (let i = 0; i < bomb.length; i++) {
-		let random = Math.floor(Math.random() * 10) + 1;
-		for (let j = 0; j < random; j++) {
-			let bombTop = bomb[i].offsetTop;
-			bomb[i].style.top = bombTop + 1 + 'px';
-		}
+	const bombs = document.querySelectorAll('.bomb');
+	for (let i = 0; i < bombs.length; i++) {
+		const bombTop = bombs[i].offsetTop;
+		bombs[i].style.top = bombTop + 5 + 'px';
 	}
 }
 
+const bombExplode = () => {
+	const bombs = document.querySelectorAll('.bomb');
+	const sky = document.querySelector('.sky');
+	for (let i = 0; i < bombs.length; i++) {
+		const bombTop = bombs[i].offsetTop;
+		const below = bombTop + 5;
+		if (below.classList.contains('sky') == false) {
+			bombs[i].className = "explosion";
+		}
+	}
+
+}
+
 const myLoadFunction = () => {
-	let bomb = document.querySelectorAll('.bomb');
+	const bomb = document.querySelectorAll('.bomb');
 	for (let i = 0; i < bomb.length; i++) {
-		let bombLeft = bomb[i].offsetLeft;							//Sets the bombs to a random position
-		let randomLeft = Math.floor(Math.random() * 1920);
+		const bombLeft = bomb[i].offsetLeft;							//Sets the bombs to a random position
+		const randomLeft = Math.floor(Math.random() * 1920);
 		bomb[i].style.left = bombLeft + randomLeft + 'px';
 	}
 	const start = document.querySelector('.start');
