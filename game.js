@@ -3,6 +3,8 @@ let downPressed = false;
 let leftPressed = false;
 let rightPressed = false;
 let lastPressed = false;
+let randomNumber = 0;
+let  randomLeft = 0;
 
 const keydown = (event) => {
 
@@ -58,6 +60,7 @@ const move = () => {
 	const player = document.getElementById('player');
 	const positionLeft = player.offsetLeft;
 	const positionTop = player.offsetTop;
+
 	if (downPressed) {
 		const newDown = positionTop + 1;
 
@@ -92,6 +95,7 @@ const move = () => {
 		const sky = document.elementFromPoint(newLeft, player.offsetTop);
 		if (sky.classList.contains('sky') == false) {
 			player.style.left = newLeft + 'px';
+			console.log(player.offsetTop);
 		}
 
 
@@ -114,8 +118,8 @@ const startGame = () => {
 	const start = document.querySelector('.start');
 	start.style.opacity = 0;
 	setInterval(bombCreate, 1000);
-	setInterval(bombDrop, 50);
-	setInterval(bombExplode, 50);
+	setInterval(bombDrop, 10);
+	setInterval(bombExplode, 200);
 }
 
 const bombCreate = () => {
@@ -123,7 +127,7 @@ const bombCreate = () => {
 	bomb.className = "bomb";
 	document.body.appendChild(bomb);
 	const bombLeft = bomb.offsetLeft;
-	const randomLeft = Math.floor(Math.random() * 1920);
+	randomLeft = getRandomNumber(0, 1920);
 	bomb.style.left = bombLeft + randomLeft + 'px';
 }
 
@@ -131,21 +135,32 @@ const bombDrop = () => {
 	const bombs = document.querySelectorAll('.bomb');
 	for (let i = 0; i < bombs.length; i++) {
 		const bombTop = bombs[i].offsetTop;
-		bombs[i].style.top = bombTop + 5 + 'px';
+		bombs[i].style.top = bombTop + 1 + 'px';
 	}
+}
+
+const getRandomNumber = (min, max) => {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 const bombExplode = () => {
 	const bombs = document.querySelectorAll('.bomb');
-	const sky = document.querySelector('.sky');
+	randomNumber = getRandomNumber(725, 900);
 	for (let i = 0; i < bombs.length; i++) {
 		const bombTop = bombs[i].offsetTop;
-		const below = bombTop + 5;
-		if (below.classList.contains('sky') == false) {
+		const sky = document.elementFromPoint(bombTop, bombs[i].offsetLeft);
+		if (bombTop >= randomNumber) {
 			bombs[i].className = "explosion";
+			setTimeout(cleanUp, 250);
+			console.log(randomNumber);
 		}
 	}
 
+}
+
+const cleanUp = () => {
+	const explosions = document.querySelectorAll('.explosion');
+	explosions[0].remove();
 }
 
 const myLoadFunction = () => {
