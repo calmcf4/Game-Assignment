@@ -4,7 +4,12 @@ let leftPressed = false;
 let rightPressed = false;
 let lastPressed = false;
 let randomNumber = 0;
-let  randomLeft = 0;
+let randomLeft = 0;
+let createBomb;
+let dropBomb;
+let explodeBomb;
+let movement;
+let playerDead = false;
 
 const keydown = (event) => {
 
@@ -52,20 +57,28 @@ const keyup = (event) => {
 			lastPressed = 'down';
 			break;
 	}
-
+	if (!playerDead) {
 	player.className = 'character stand ' + lastPressed;
+	}
 }
 
 const move = () => {
 	const player = document.getElementById('player');
 	const positionLeft = player.offsetLeft;
 	const positionTop = player.offsetTop;
+	const explosion = document.elementFromPoint(positionLeft, positionTop);
 
+	if (explosion.classList.contains('explosion')) {
+		stop();
+		player.className = 'character dead';
+		playerDead = true;
+	}
 	if (downPressed) {
 		const newDown = positionTop + 1;
 
 		const sky = document.elementFromPoint(player.offsetLeft, newDown + 32);
-		if (sky.classList.contains('sky') == false) {
+
+		if (!sky.classList.contains('sky')) {
 			player.style.top = newDown + 'px';
 		}
 
@@ -79,7 +92,9 @@ const move = () => {
 		const newTop = positionTop - 1;
 
 		const sky = document.elementFromPoint(player.offsetLeft, newTop);
-		if (sky.classList.contains('sky') == false) {
+
+
+		if (!sky.classList.contains('sky')) {
 			player.style.top = newTop + 'px';
 		}
 
@@ -89,23 +104,24 @@ const move = () => {
 			}
 		}
 	}
-	if (leftPressed) {
+	if (leftPressed && !playerDead) {
 		const newLeft = positionLeft - 1;
 
 		const sky = document.elementFromPoint(newLeft, player.offsetTop);
-		if (sky.classList.contains('sky') == false) {
+
+		if (!sky.classList.contains('sky')) {
 			player.style.left = newLeft + 'px';
-			console.log(player.offsetTop);
 		}
 
 
 		player.className = 'character walk left';
 	}
-	if (rightPressed) {
+	if (rightPressed && !playerDead) {
 		const newRight = positionLeft + 1;
 
 		const sky = document.elementFromPoint(newRight + 32, player.offsetTop);
-		if (sky.classList.contains('sky') == false) {
+
+		if (!sky.classList.contains('sky')) {
 			player.style.left = newRight + 'px';
 		}
 
@@ -117,9 +133,11 @@ const move = () => {
 const startGame = () => {
 	const start = document.querySelector('.start');
 	start.style.opacity = 0;
-	setInterval(bombCreate, 1000);
-	setInterval(bombDrop, 10);
-	setInterval(bombExplode, 200);
+	start.style.pointerEvents = "none";
+	createBomb = setInterval(bombCreate, 1000);
+	dropBomb = setInterval(bombDrop, 10);
+	explodeBomb = setInterval(bombExplode, 200);
+	playerDead = false;
 }
 
 const bombCreate = () => {
@@ -152,7 +170,6 @@ const bombExplode = () => {
 		if (bombTop >= randomNumber) {
 			bombs[i].className = "explosion";
 			setTimeout(cleanUp, 250);
-			console.log(randomNumber);
 		}
 	}
 
@@ -161,6 +178,17 @@ const bombExplode = () => {
 const cleanUp = () => {
 	const explosions = document.querySelectorAll('.explosion');
 	explosions[0].remove();
+}
+
+const stop = () => {
+	const start = document.querySelector('.start');
+	start.style.opacity = 1;
+	start.style.pointerEvents = "auto";
+	clearInterval(movement);
+	clearInterval(createBomb);
+	clearInterval(dropBomb);
+	clearInterval(explodeBomb);
+	start.firstChild.nodeValue = 'Game Over';
 }
 
 const myLoadFunction = () => {
@@ -172,7 +200,7 @@ const myLoadFunction = () => {
 	}
 	const start = document.querySelector('.start');
 	start.addEventListener('click', startGame);
-	timeout = setInterval(move, 10);
+	movement = setInterval(move, 10);
 	document.addEventListener('keydown', keydown);
 	document.addEventListener('keyup', keyup);
 }
