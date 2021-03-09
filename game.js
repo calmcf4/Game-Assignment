@@ -10,6 +10,8 @@ let dropBomb;
 let explodeBomb;
 let movement;
 let playerDead = false;
+let playerHealth = 3;
+let counter = 0;
 
 const keydown = (event) => {
 
@@ -58,8 +60,33 @@ const keyup = (event) => {
 			break;
 	}
 	if (!playerDead) {
-	player.className = 'character stand ' + lastPressed;
+		player.className = 'character stand ' + lastPressed;
 	}
+}
+
+const checkIfDead = () => {
+	if (playerHealth == 0) {
+		playerDead = true;
+		player.className = 'character dead';
+		stop();
+	}
+}
+
+const playerHit = () => {
+	const player = document.getElementById('player');
+	const positionLeft = player.offsetLeft;
+	const positionTop = player.offsetTop;
+	const explosion = document.elementFromPoint(positionLeft, positionTop);
+	const life = document.querySelectorAll("ul > li");
+
+
+	if (explosion.classList.contains('explosion')) {
+		playerHealth -= 1;
+		life[counter].style.opacity = 0;
+		counter++;
+
+	}
+
 }
 
 const move = () => {
@@ -69,9 +96,8 @@ const move = () => {
 	const explosion = document.elementFromPoint(positionLeft, positionTop);
 
 	if (explosion.classList.contains('explosion')) {
-		stop();
-		player.className = 'character dead';
-		playerDead = true;
+		player.className = 'character hit ' + lastPressed;
+
 	}
 	if (downPressed) {
 		const newDown = positionTop + 1;
@@ -131,6 +157,8 @@ const move = () => {
 }
 
 const startGame = () => {
+	counter = 0;
+	playerHealth = 3;
 	const start = document.querySelector('.start');
 	start.style.opacity = 0;
 	start.style.pointerEvents = "none";
@@ -138,6 +166,13 @@ const startGame = () => {
 	dropBomb = setInterval(bombDrop, 10);
 	explodeBomb = setInterval(bombExplode, 200);
 	playerDead = false;
+	movement = setInterval(move, 10);
+	death = setInterval(checkIfDead, 10);
+	const life = document.querySelectorAll("ul > li");
+	for (let i = 0; i < life.length; i++) {
+		life[i].style.opacity = 1;
+	}
+
 }
 
 const bombCreate = () => {
@@ -169,6 +204,7 @@ const bombExplode = () => {
 		const sky = document.elementFromPoint(bombTop, bombs[i].offsetLeft);
 		if (bombTop >= randomNumber) {
 			bombs[i].className = "explosion";
+			setTimeout(playerHit, 250);
 			setTimeout(cleanUp, 250);
 		}
 	}
@@ -188,6 +224,7 @@ const stop = () => {
 	clearInterval(createBomb);
 	clearInterval(dropBomb);
 	clearInterval(explodeBomb);
+	clearInterval(death);
 	start.firstChild.nodeValue = 'Game Over';
 }
 
@@ -200,7 +237,6 @@ const myLoadFunction = () => {
 	}
 	const start = document.querySelector('.start');
 	start.addEventListener('click', startGame);
-	movement = setInterval(move, 10);
 	document.addEventListener('keydown', keydown);
 	document.addEventListener('keyup', keyup);
 }
