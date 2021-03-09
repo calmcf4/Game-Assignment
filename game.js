@@ -160,6 +160,9 @@ const startGame = () => {
 	counter = 0;
 	playerHealth = 3;
 	const start = document.querySelector('.start');
+	const playAgain = document.querySelector('.playAgain');
+	playAgain.style.opacity = 0;
+	playAgain.style.pointerEvents = "none";
 	start.style.opacity = 0;
 	start.style.pointerEvents = "none";
 	createBomb = setInterval(bombCreate, 1000);
@@ -226,6 +229,11 @@ const stop = () => {
 	clearInterval(explodeBomb);
 	clearInterval(death);
 	start.firstChild.nodeValue = 'Game Over';
+	const playAgain = document.querySelector('.playAgain');
+	playAgain.style.opacity = 1;
+	start.style.pointerEvents = "none";
+	playAgain.style.pointerEvents = "auto";
+	playAgain.addEventListener('click', startGame);
 }
 
 const myLoadFunction = () => {
