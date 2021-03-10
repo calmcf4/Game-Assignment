@@ -12,6 +12,8 @@ let movement;
 let playerDead = false;
 let playerHealth = 3;
 let counter = 0;
+let bombsDodged = 0;
+let scoreboard = [];
 
 const keydown = (event) => {
 
@@ -175,6 +177,12 @@ const startGame = () => {
 	for (let i = 0; i < life.length; i++) {
 		life[i].style.opacity = 1;
 	}
+	bombsDodged = 0;
+	const score = document.querySelector('.score');
+	score.style.opacity = 0;
+	const name = document.querySelector('.name');
+	name.style.opacity = 0;
+	name.style.pointerEvents = "none";
 
 }
 
@@ -214,9 +222,30 @@ const bombExplode = () => {
 
 }
 
+const test = () => {
+	console.log(window.localStorage.length);
+	for (let i = 0; i < window.localStorage.length; i ++) {
+		console.log(window.localStorage.key(i));
+		let name = window.localStorage.key(i);
+		console.log(window.localStorage.getItem(name));
+	}
+}
+
+
+const logScore = () => {
+	const score = {
+		name: document.getElementById('firstName').value,
+		score: bombsDodged,
+	};
+	window.localStorage.setItem(score.name, score.score);
+	scoreboard.push(score.name);
+
+}
+
 const cleanUp = () => {
 	const explosions = document.querySelectorAll('.explosion');
 	explosions[0].remove();
+	bombsDodged++;
 }
 
 const stop = () => {
@@ -234,6 +263,12 @@ const stop = () => {
 	start.style.pointerEvents = "none";
 	playAgain.style.pointerEvents = "auto";
 	playAgain.addEventListener('click', startGame);
+	const score = document.querySelector('.score');
+	score.style.opacity = 1;
+	score.firstChild.nodeValue = `You dodged ${bombsDodged} bombs`;
+	const name = document.querySelector('.name');
+	name.style.opacity = 1;
+	name.style.pointerEvents = "auto";
 }
 
 const myLoadFunction = () => {
@@ -247,7 +282,9 @@ const myLoadFunction = () => {
 	start.addEventListener('click', startGame);
 	document.addEventListener('keydown', keydown);
 	document.addEventListener('keyup', keyup);
+	const submit = document.querySelector('.submit');
+	submit.addEventListener('click', logScore);
 }
 
-
 document.addEventListener('DOMContentLoaded', myLoadFunction);
+document.addEventListener('click', test);
