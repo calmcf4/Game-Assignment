@@ -189,8 +189,22 @@ const startGame = () => {
 
 
 const bombCreate = () => {
+	const random = Math.floor(Math.random() * 3);
 	const bomb = document.createElement("li");
+	console.log(random);
 	bomb.className = "bomb";
+	if (random == 0) {
+		tiltLeft = bomb.style.transform = "rotate(135deg)";
+		bomb.setAttribute("tiltedLeft", tiltLeft);
+	}
+	if (random == 1) {
+		noTilt = bomb.style.transform = "rotate(90deg)";
+		bomb.setAttribute("noTilt", noTilt);
+	}
+	if (random == 2) {
+		tiltRight = bomb.style.transform = "rotate(45deg)";
+		bomb.setAttribute("tiltedRight", tiltRight);
+	}
 	document.body.appendChild(bomb);
 	const bombLeft = bomb.offsetLeft;
 	randomLeft = getRandomNumber(0, 1920);
@@ -201,7 +215,14 @@ const bombDrop = () => {
 	const bombs = document.querySelectorAll('.bomb');
 	for (let i = 0; i < bombs.length; i++) {
 		const bombTop = bombs[i].offsetTop;
+		const bombLeft = bombs[i].offsetLeft;
 		bombs[i].style.top = bombTop + 1 + 'px';
+		if (bombs[i].hasAttribute("tiltedLeft")) {
+			bombs[i].style.left = bombLeft - 1 + 'px';
+		}
+		if (bombs[i].hasAttribute("tiltedRight")) {
+			bombs[i].style.left = bombLeft + 1 + 'px';
+		}
 	}
 }
 
@@ -216,6 +237,10 @@ const bombExplode = () => {
 		const bombTop = bombs[i].offsetTop;
 		const sky = document.elementFromPoint(bombTop, bombs[i].offsetLeft);
 		if (bombTop >= randomNumber) {
+			if (bombs[i].hasAttribute("tiltedLeft") || bombs[i].hasAttribute("tiltedRight")) {
+				noTilt = bombs[i].style.transform = "rotate(90deg)";
+				bombs[i].setAttribute("noTilt", noTilt);
+			}
 			bombs[i].className = "explosion";
 			setTimeout(playerHit, 250);
 			setTimeout(cleanUp, 250);
@@ -239,7 +264,7 @@ let logScore = () => {
 	console.log(newScore);
 	listing.appendChild(newScore);
 	scoreboard.appendChild(listing);
-	
+
 
 }
 
@@ -251,7 +276,7 @@ const cleanUp = () => {
 
 const initLeaderboard = () => {
 	const scoreboard = document.querySelector('scoreboard');
-	for (let i = 0; i < window.localStorage.length; i ++) {
+	for (let i = 0; i < window.localStorage.length; i++) {
 		const listing = document.createElement("li");
 		let name = window.localStorage.key(i);
 		const score = document.createTextNode(`${window.localStorage.key(i)} : ${window.localStorage.getItem(name)}`);
