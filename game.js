@@ -19,6 +19,68 @@ let bombsExploded = 0;
 let speed = 24;
 let dropRate = 1000;
 
+
+const initLeaderboard = () => {
+	const scoreboard = document.querySelector('scoreboard');
+	for (let i = 0; i < window.localStorage.length; i++) {
+		const listing = document.createElement("li");
+		let name = window.localStorage.key(i);
+		const score = document.createTextNode(`${window.localStorage.key(i)} dodged ${window.localStorage.getItem(name)} bombs.`);
+		listing.appendChild(score);
+		this.scoreboard.appendChild(listing);
+
+	}
+
+}
+
+
+let logScore = () => {
+	const score = {
+		name: document.getElementById('firstName').value,
+		score: bombsDodged,
+	};
+	console.log(score.name);
+	window.localStorage.setItem(score.name, score.score);
+	let scoreboard = document.querySelector('#scoreboard');
+	let listing = document.createElement("li");
+	let newScore = document.createTextNode(`${score.name} dodged ${score.score} bombs.`);
+	console.log(newScore);
+	listing.appendChild(newScore);
+	scoreboard.appendChild(listing);
+
+
+}
+
+
+const checkIfDead = () => {
+	if (playerHealth == 0) {
+		playerDead = true;
+		player.className = 'character dead';
+		stop();
+	}
+}
+
+
+const removeAllBombs = () => {
+	const bombs = document.querySelectorAll('.bomb');
+	for (let i = 0; i < bombs.length; i++) {
+		bombs[i].remove();
+	}
+}
+
+
+const getRandomNumber = (min, max) => {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+const cleanUp = () => {
+	const explosions = document.querySelectorAll('.explosion');
+	explosions[0].remove();
+	bombsDodged++;
+}
+
+
 const keydown = (event) => {
 
 	switch (event.key) {
@@ -39,6 +101,7 @@ const keydown = (event) => {
 			break;
 	}
 }
+
 
 const keyup = (event) => {
 
@@ -70,13 +133,6 @@ const keyup = (event) => {
 	}
 }
 
-const checkIfDead = () => {
-	if (playerHealth == 0) {
-		playerDead = true;
-		player.className = 'character dead';
-		stop();
-	}
-}
 
 const playerHit = () => {
 	const player = document.getElementById('player');
@@ -94,6 +150,7 @@ const playerHit = () => {
 	}
 
 }
+
 
 const move = () => {
 	const player = document.getElementById('player');
@@ -162,6 +219,7 @@ const move = () => {
 
 }
 
+
 const startGame = () => {
 	removeAllBombs();
 	counter = 0;
@@ -194,12 +252,33 @@ const startGame = () => {
 
 }
 
-const removeAllBombs = () => {
-	const bombs = document.querySelectorAll('.bomb');
-	for (let i = 0; i < bombs.length; i++) {
-		bombs[i].remove();
-	}
+
+const stop = () => {
+	const scoreboard = document.querySelector('#scoreboard');
+	scoreboard.style.opacity = 1;
+	const start = document.querySelector('.start');
+	start.style.opacity = 1;
+	start.style.pointerEvents = "auto";
+	clearInterval(movement);
+	clearInterval(createBomb);
+	clearInterval(dropBomb);
+	clearInterval(explodeBomb);
+	clearInterval(death);
+	clearTimeout(increaseLevel);
+	start.firstChild.nodeValue = 'Game Over';
+	const playAgain = document.querySelector('.playAgain');
+	playAgain.style.opacity = 1;
+	start.style.pointerEvents = "none";
+	playAgain.style.pointerEvents = "auto";
+	playAgain.addEventListener('click', startGame);
+	const score = document.querySelector('.score');
+	score.style.opacity = 1;
+	score.firstChild.nodeValue = `You dodged ${bombsDodged} bombs`;
+	const name = document.querySelector('.name');
+	name.style.opacity = 1;
+	name.style.pointerEvents = "auto";
 }
+
 
 const bombCreate = () => {
 	const random = Math.floor(Math.random() * 3);
@@ -228,18 +307,6 @@ const bombCreate = () => {
 	}
 }
 
-const increaseLevel = () => {
-	level++
-	bombsDropped = 0;
-	bombsExploded = 0;
-	speed -=2;
-	dropRate -=50;
-	createBomb = setInterval(bombCreate, dropRate);
-	dropBomb = setInterval(bombDrop, speed);
-	explodeBomb = setInterval(bombExplode, 200);
-	console.log(`Now starting level ${level}`);
-	
-}
 
 const bombDrop = () => {
 	const bombs = document.querySelectorAll('.bomb');
@@ -256,9 +323,6 @@ const bombDrop = () => {
 	}
 }
 
-const getRandomNumber = (min, max) => {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 const bombExplode = () => {
 	const bombs = document.querySelectorAll('.bomb');
@@ -286,68 +350,19 @@ const bombExplode = () => {
 }
 
 
-
-let logScore = () => {
-	const score = {
-		name: document.getElementById('firstName').value,
-		score: bombsDodged,
-	};
-	console.log(score.name);
-	window.localStorage.setItem(score.name, score.score);
-	let scoreboard = document.querySelector('#scoreboard');
-	let listing = document.createElement("li");
-	let newScore = document.createTextNode(`${score.name} dodged ${score.score} bombs.`);
-	console.log(newScore);
-	listing.appendChild(newScore);
-	scoreboard.appendChild(listing);
-
-
+const increaseLevel = () => {
+	level++
+	bombsDropped = 0;
+	bombsExploded = 0;
+	speed -=2;
+	dropRate -=50;
+	createBomb = setInterval(bombCreate, dropRate);
+	dropBomb = setInterval(bombDrop, speed);
+	explodeBomb = setInterval(bombExplode, 200);
+	console.log(`Now starting level ${level}`);
+	
 }
 
-const cleanUp = () => {
-	const explosions = document.querySelectorAll('.explosion');
-	explosions[0].remove();
-	bombsDodged++;
-}
-
-const initLeaderboard = () => {
-	const scoreboard = document.querySelector('scoreboard');
-	for (let i = 0; i < window.localStorage.length; i++) {
-		const listing = document.createElement("li");
-		let name = window.localStorage.key(i);
-		const score = document.createTextNode(`${window.localStorage.key(i)} dodged ${window.localStorage.getItem(name)} bombs.`);
-		listing.appendChild(score);
-		this.scoreboard.appendChild(listing);
-
-	}
-
-}
-
-const stop = () => {
-	const scoreboard = document.querySelector('#scoreboard');
-	scoreboard.style.opacity = 1;
-	const start = document.querySelector('.start');
-	start.style.opacity = 1;
-	start.style.pointerEvents = "auto";
-	clearInterval(movement);
-	clearInterval(createBomb);
-	clearInterval(dropBomb);
-	clearInterval(explodeBomb);
-	clearInterval(death);
-	clearTimeout(increaseLevel);
-	start.firstChild.nodeValue = 'Game Over';
-	const playAgain = document.querySelector('.playAgain');
-	playAgain.style.opacity = 1;
-	start.style.pointerEvents = "none";
-	playAgain.style.pointerEvents = "auto";
-	playAgain.addEventListener('click', startGame);
-	const score = document.querySelector('.score');
-	score.style.opacity = 1;
-	score.firstChild.nodeValue = `You dodged ${bombsDodged} bombs`;
-	const name = document.querySelector('.name');
-	name.style.opacity = 1;
-	name.style.pointerEvents = "auto";
-}
 
 const myLoadFunction = () => {
 	const bomb = document.querySelectorAll('.bomb');
@@ -364,5 +379,6 @@ const myLoadFunction = () => {
 	submit.addEventListener('click', logScore);
 	initLeaderboard();
 }
+
 
 document.addEventListener('DOMContentLoaded', myLoadFunction);
