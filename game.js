@@ -13,6 +13,11 @@ let playerDead = false;
 let playerHealth = 3;
 let counter = 0;
 let bombsDodged = 0;
+let level = 1;
+let bombsDropped = 0;
+let bombsExploded = 0;
+let speed = 24;
+let dropRate = 1000;
 
 const keydown = (event) => {
 
@@ -158,16 +163,19 @@ const move = () => {
 }
 
 const startGame = () => {
+	removeAllBombs();
 	counter = 0;
 	playerHealth = 3;
 	const start = document.querySelector('.start');
 	const playAgain = document.querySelector('.playAgain');
+	const scoreboard = document.querySelector('#scoreboard');
+	scoreboard.style.opacity = 0;
 	playAgain.style.opacity = 0;
 	playAgain.style.pointerEvents = "none";
 	start.style.opacity = 0;
 	start.style.pointerEvents = "none";
-	createBomb = setInterval(bombCreate, 1000);
-	dropBomb = setInterval(bombDrop, 10);
+	createBomb = setInterval(bombCreate, dropRate);
+	dropBomb = setInterval(bombDrop, speed);
 	explodeBomb = setInterval(bombExplode, 200);
 	playerDead = false;
 	movement = setInterval(move, 10);
@@ -186,19 +194,23 @@ const startGame = () => {
 
 }
 
-
+const removeAllBombs = () => {
+	const bombs = document.querySelectorAll('.bomb');
+	for (let i = 0; i < bombs.length; i++) {
+		bombs[i].remove();
+	}
+}
 
 const bombCreate = () => {
 	const random = Math.floor(Math.random() * 3);
 	const bomb = document.createElement("li");
-	console.log(random);
 	bomb.className = "bomb";
 	if (random == 0) {
 		tiltLeft = bomb.style.transform = "rotate(135deg)";
 		bomb.setAttribute("tiltedLeft", tiltLeft);
 	}
 	if (random == 1) {
-		noTilt = bomb.style.transform = "rotate(90deg)";
+		noTilt = bomb.style.transform = "rotate(360)";
 		bomb.setAttribute("noTilt", noTilt);
 	}
 	if (random == 2) {
@@ -209,6 +221,24 @@ const bombCreate = () => {
 	const bombLeft = bomb.offsetLeft;
 	randomLeft = getRandomNumber(0, 1920);
 	bomb.style.left = bombLeft + randomLeft + 'px';
+	bombsDropped++;
+	console.log(bombsDropped);
+	if (bombsDropped == level * 10) {
+		clearInterval(createBomb);
+	}
+}
+
+const increaseLevel = () => {
+	level++
+	bombsDropped = 0;
+	bombsExploded = 0;
+	speed -=2;
+	dropRate -=50;
+	createBomb = setInterval(bombCreate, dropRate);
+	dropBomb = setInterval(bombDrop, speed);
+	explodeBomb = setInterval(bombExplode, 200);
+	console.log(`Now starting level ${level}`);
+	
 }
 
 const bombDrop = () => {
@@ -238,12 +268,18 @@ const bombExplode = () => {
 		const sky = document.elementFromPoint(bombTop, bombs[i].offsetLeft);
 		if (bombTop >= randomNumber) {
 			if (bombs[i].hasAttribute("tiltedLeft") || bombs[i].hasAttribute("tiltedRight")) {
-				noTilt = bombs[i].style.transform = "rotate(90deg)";
+				noTilt = bombs[i].style.transform = "rotate(360deg)";
 				bombs[i].setAttribute("noTilt", noTilt);
 			}
 			bombs[i].className = "explosion";
 			setTimeout(playerHit, 250);
 			setTimeout(cleanUp, 250);
+			bombsExploded++;
+			if (bombsExploded == level * 10) {
+				clearInterval(explodeBomb);
+				clearInterval(dropBomb);
+				setTimeout(increaseLevel, 3000);
+			}
 		}
 	}
 
@@ -260,7 +296,7 @@ let logScore = () => {
 	window.localStorage.setItem(score.name, score.score);
 	let scoreboard = document.querySelector('#scoreboard');
 	let listing = document.createElement("li");
-	let newScore = document.createTextNode(`${score.name} : ${score.score}`);
+	let newScore = document.createTextNode(`${score.name} dodged ${score.score} bombs.`);
 	console.log(newScore);
 	listing.appendChild(newScore);
 	scoreboard.appendChild(listing);
@@ -279,7 +315,7 @@ const initLeaderboard = () => {
 	for (let i = 0; i < window.localStorage.length; i++) {
 		const listing = document.createElement("li");
 		let name = window.localStorage.key(i);
-		const score = document.createTextNode(`${window.localStorage.key(i)} : ${window.localStorage.getItem(name)}`);
+		const score = document.createTextNode(`${window.localStorage.key(i)} dodged ${window.localStorage.getItem(name)} bombs.`);
 		listing.appendChild(score);
 		this.scoreboard.appendChild(listing);
 
@@ -288,6 +324,8 @@ const initLeaderboard = () => {
 }
 
 const stop = () => {
+	const scoreboard = document.querySelector('#scoreboard');
+	scoreboard.style.opacity = 1;
 	const start = document.querySelector('.start');
 	start.style.opacity = 1;
 	start.style.pointerEvents = "auto";
@@ -296,6 +334,7 @@ const stop = () => {
 	clearInterval(dropBomb);
 	clearInterval(explodeBomb);
 	clearInterval(death);
+	clearTimeout(increaseLevel);
 	start.firstChild.nodeValue = 'Game Over';
 	const playAgain = document.querySelector('.playAgain');
 	playAgain.style.opacity = 1;

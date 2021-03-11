@@ -471,7 +471,7 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	text-align: center;
 	left: 50%;
 	margin-left: -10vw;
-	top: 60%;
+	top: 40%;
 	margin-top: -1em;
 	font-family: 'Anton';
 	cursor: pointer;
@@ -480,6 +480,50 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 }
 
 .score {
+
+	color: white;
+	text-shadow: 2px 2px 2px #000;
+	position: absolute;
+	font-size: 2em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 20vw;
+	background-color: #ccc;
+	z-index: 1000;
+	text-align: center;
+	left: 50%;
+	margin-left: -10vw;
+	top: 30%;
+	margin-top: -1em;
+	font-family: 'Anton';
+	cursor: pointer;
+	border-radius: 20px;
+	box-shadow: 4px 4px 4px #000;
+	opacity: 0;
+	pointer-events: none;
+}
+
+#scoreboard	{
+	color: white;
+	text-shadow: 2px 2px 2px #000;
+	position: absolute;
+	width: 15vw;
+	height: 30vh;
+	z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #ccc;
+	font-family: 'Anton';
+	left: 75%;
+	top: 30%;
+	margin-top: -1em;
+	margin-left: -10vw;
+	border-radius: 20px;
+	box-shadow: 4px 4px 4px #000;
+}
+
+.name {
 
 	color: white;
 	text-shadow: 2px 2px 2px #000;
@@ -503,39 +547,6 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	pointer-events: none;
 }
 
-#scoreboard	{
-	color: white;
-	position: absolute;
-	width: 20vw;
-	height: 30vh;
-	z-index: 1000;
-    background: rgba(0, 0, 0, 0.5);
-}
-
-.name {
-
-	color: white;
-	text-shadow: 2px 2px 2px #000;
-	position: absolute;
-	font-size: 2em;
-	margin-left: auto;
-	margin-right: auto;
-	width: 20vw;
-	background-color: #ccc;
-	z-index: 1000;
-	text-align: center;
-	left: 50%;
-	margin-left: -10vw;
-	top: 70%;
-	margin-top: -1em;
-	font-family: 'Anton';
-	cursor: pointer;
-	border-radius: 20px;
-	box-shadow: 4px 4px 4px #000;
-	opacity: 0;
-	pointer-events: none;
-}
-
 .start {
 
 	color: white;
@@ -550,7 +561,7 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	text-align: center;
 	left: 50%;
 	margin-left: -10vw;
-	top: 40%;
+	top: 20%;
 	margin-top: -1em;
 	font-family: 'Anton';
 	cursor: pointer;
