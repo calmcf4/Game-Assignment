@@ -1,0 +1,8 @@
+random number function: (accessed 04/03/2021)
+https://stackoverflow.com/questions/18921134/math-random-numbers-between-50-and-80
+
+call function with random timer:  (accessed 10/03/2021)
+https://css-tricks.com/snippets/javascript/function-with-random-timer/
+
+localstorage: (accessed 10/03/2021)
+https://blog.logrocket.com/localstorage-javascript-complete-guide/

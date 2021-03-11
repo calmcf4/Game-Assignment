@@ -503,6 +503,15 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	pointer-events: none;
 }
 
+#scoreboard	{
+	color: white;
+	position: absolute;
+	width: 20vw;
+	height: 30vh;
+	z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+}
+
 .name {
 
 	color: white;

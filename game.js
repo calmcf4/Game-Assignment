@@ -13,7 +13,6 @@ let playerDead = false;
 let playerHealth = 3;
 let counter = 0;
 let bombsDodged = 0;
-let scoreboard = [];
 
 const keydown = (event) => {
 
@@ -184,7 +183,10 @@ const startGame = () => {
 	name.style.opacity = 0;
 	name.style.pointerEvents = "none";
 
+
 }
+
+
 
 const bombCreate = () => {
 	const bomb = document.createElement("li");
@@ -222,23 +224,22 @@ const bombExplode = () => {
 
 }
 
-const test = () => {
-	console.log(window.localStorage.length);
-	for (let i = 0; i < window.localStorage.length; i ++) {
-		console.log(window.localStorage.key(i));
-		let name = window.localStorage.key(i);
-		console.log(window.localStorage.getItem(name));
-	}
-}
 
 
-const logScore = () => {
+let logScore = () => {
 	const score = {
 		name: document.getElementById('firstName').value,
 		score: bombsDodged,
 	};
+	console.log(score.name);
 	window.localStorage.setItem(score.name, score.score);
-	scoreboard.push(score.name);
+	let scoreboard = document.querySelector('#scoreboard');
+	let listing = document.createElement("li");
+	let newScore = document.createTextNode(`${score.name} : ${score.score}`);
+	console.log(newScore);
+	listing.appendChild(newScore);
+	scoreboard.appendChild(listing);
+	
 
 }
 
@@ -246,6 +247,19 @@ const cleanUp = () => {
 	const explosions = document.querySelectorAll('.explosion');
 	explosions[0].remove();
 	bombsDodged++;
+}
+
+const initLeaderboard = () => {
+	const scoreboard = document.querySelector('scoreboard');
+	for (let i = 0; i < window.localStorage.length; i ++) {
+		const listing = document.createElement("li");
+		let name = window.localStorage.key(i);
+		const score = document.createTextNode(`${window.localStorage.key(i)} : ${window.localStorage.getItem(name)}`);
+		listing.appendChild(score);
+		this.scoreboard.appendChild(listing);
+
+	}
+
 }
 
 const stop = () => {
@@ -284,7 +298,7 @@ const myLoadFunction = () => {
 	document.addEventListener('keyup', keyup);
 	const submit = document.querySelector('.submit');
 	submit.addEventListener('click', logScore);
+	initLeaderboard();
 }
 
 document.addEventListener('DOMContentLoaded', myLoadFunction);
-document.addEventListener('click', test);
