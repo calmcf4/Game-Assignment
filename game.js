@@ -39,12 +39,10 @@ let logScore = () => {
 		name: document.getElementById('firstName').value,
 		score: bombsDodged,
 	};
-	console.log(score.name);
 	window.localStorage.setItem(score.name, score.score);
 	let scoreboard = document.querySelector('#scoreboard');
 	let listing = document.createElement("li");
 	let newScore = document.createTextNode(`${score.name} dodged ${score.score} bombs.`);
-	console.log(newScore);
 	listing.appendChild(newScore);
 	scoreboard.appendChild(listing);
 
@@ -132,6 +130,7 @@ const keyup = (event) => {
 		player.className = 'character stand ' + lastPressed;
 	}
 }
+
 
 
 const playerHit = () => {
@@ -222,8 +221,12 @@ const move = () => {
 
 const startGame = () => {
 	removeAllBombs();
+	dropRate = 1000;
+	speed = 24;
+	level = 1;
 	counter = 0;
 	playerHealth = 3;
+	bombsDropped = 0;
 	const start = document.querySelector('.start');
 	const playAgain = document.querySelector('.playAgain');
 	const scoreboard = document.querySelector('#scoreboard');
@@ -248,7 +251,8 @@ const startGame = () => {
 	const name = document.querySelector('.name');
 	name.style.opacity = 0;
 	name.style.pointerEvents = "none";
-
+	const levelTag = document.querySelector('.level');
+	levelTag.firstChild.nodeValue = `Level: ${level}`;
 
 }
 
@@ -352,6 +356,8 @@ const bombExplode = () => {
 
 const increaseLevel = () => {
 	level++
+	const levelTag = document.querySelector('.level');
+	levelTag.firstChild.nodeValue = `Level: ${level}`;
 	bombsDropped = 0;
 	bombsExploded = 0;
 	speed -=2;
@@ -359,7 +365,6 @@ const increaseLevel = () => {
 	createBomb = setInterval(bombCreate, dropRate);
 	dropBomb = setInterval(bombDrop, speed);
 	explodeBomb = setInterval(bombExplode, 200);
-	console.log(`Now starting level ${level}`);
 	
 }
 

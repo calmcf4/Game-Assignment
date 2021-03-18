@@ -523,6 +523,26 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	box-shadow: 4px 4px 4px #000;
 }
 
+.level {
+
+	color: white;
+	text-shadow: 2px 2px 2px #000;
+	position: absolute;
+	margin-left: auto;
+	margin-right: auto;
+	width: 20vw;
+	z-index: 1000;
+	left: 12%;
+	margin-left: -10vw;
+	top: 2%;
+	margin-top: -1em;
+	font-family: 'Anton';
+	cursor: pointer;
+	opacity: 1;
+	pointer-events: none;
+	
+}
+
 .name {
 
 	color: white;
