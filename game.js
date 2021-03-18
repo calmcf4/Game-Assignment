@@ -2,11 +2,11 @@ let upPressed = false;
 let downPressed = false;
 let leftPressed = false;
 let rightPressed = false;
-let lastPressed = false;
+let lastPressed = false;				
 let randomNumber = 0;
 let randomLeft = 0;
-let createBomb;
-let dropBomb;
+let createBomb;						//Initialises all of the variables that need to be hoisted in order for them to
+let dropBomb;						// be used in multiple functions
 let explodeBomb;
 let movement;
 let playerDead = false;
@@ -19,13 +19,13 @@ let bombsExploded = 0;
 let speed = 24;
 let dropRate = 1000;
 
-
+	//Creates the leaderboard on load by looping through local storage and adding them to the page
 const initLeaderboard = () => {
 	const scoreboard = document.querySelector('scoreboard');
 	for (let i = 0; i < window.localStorage.length; i++) {
 		const listing = document.createElement("li");
 		let name = window.localStorage.key(i);
-		const score = document.createTextNode(`${window.localStorage.key(i)} dodged ${window.localStorage.getItem(name)} bombs.`);
+		const score = document.createTextNode(`${window.localStorage.key(i)} dodged ${window.localStorage.getItem(name)} bombs.`);		
 		listing.appendChild(score);
 		this.scoreboard.appendChild(listing);
 
@@ -33,8 +33,10 @@ const initLeaderboard = () => {
 
 }
 
-
-let logScore = () => {
+	/* When this function is called it creates an element containing the score and adds it to the leaderboard,
+	while also adding it to the local storage, this allows the score to be logged when it is clicked, while also
+	saving it so that it still appears on load */
+const logScore = () => {
 	const score = {
 		name: document.getElementById('firstName').value,
 		score: bombsDodged,
@@ -49,7 +51,7 @@ let logScore = () => {
 
 }
 
-
+//Is on a timer, if the player health reaches 0 the game will stop and the player will use the dead class
 const checkIfDead = () => {
 	if (playerHealth == 0) {
 		playerDead = true;
@@ -58,7 +60,7 @@ const checkIfDead = () => {
 	}
 }
 
-
+//Removes all bombs currently in play so that a situation where there are bombs immediately above the player on restart does not occur
 const removeAllBombs = () => {
 	const bombs = document.querySelectorAll('.bomb');
 	for (let i = 0; i < bombs.length; i++) {
@@ -66,12 +68,12 @@ const removeAllBombs = () => {
 	}
 }
 
-
+//Used to create a random number, as the Math.random is not reliable for large numbers
 const getRandomNumber = (min, max) => {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
+//Is used on a timer to remove bombs that have exploded, otherwise the screen would become filled with explosions
 const cleanUp = () => {
 	const explosions = document.querySelectorAll('.explosion');
 	explosions[0].remove();
@@ -132,7 +134,9 @@ const keyup = (event) => {
 }
 
 
-
+/* Every time a bomb explodes this function is called, it checks if the player is in the same area as an explosion
+If the player is hit by an explosion, 1 life is removed. 
+The counter is used to track the number of hits taken, so that the correct life on the screen is removed. */
 const playerHit = () => {
 	const player = document.getElementById('player');
 	const positionLeft = player.offsetLeft;
@@ -218,7 +222,8 @@ const move = () => {
 
 }
 
-
+/* Starts the game, as this function will be called when the game is restarted without loading it is necessary for the variables to be assigned their default values again.
+Once this has occurred, all of the functions related to the bombs and player are set on intervals */
 const startGame = () => {
 	removeAllBombs();
 	dropRate = 1000;
@@ -256,7 +261,7 @@ const startGame = () => {
 
 }
 
-
+/* Stops the game, the leaderboard is displayed and all intervals are cleared */
 const stop = () => {
 	const scoreboard = document.querySelector('#scoreboard');
 	scoreboard.style.opacity = 1;
@@ -283,7 +288,9 @@ const stop = () => {
 	name.style.pointerEvents = "auto";
 }
 
-
+/* Controls the creation of the bombs. First a random number is generated between 0 and 2. This number will determine if the bomb will lean left, right or have no leaning.
+	Once the direction of the bomb has been decided, the position is then generated using the random number function, this gives it a position between 0 and 1920 (the width of the screen).
+	Lastly, the bombsDropped variable is used to track the number of bombs dropped that will be used for the levelling feature */
 const bombCreate = () => {
 	const random = Math.floor(Math.random() * 3);
 	const bomb = document.createElement("li");
@@ -311,7 +318,7 @@ const bombCreate = () => {
 	}
 }
 
-
+/* Controls the dropping of the bombs by looping through them and dropping them all on an interval. If the bomb is tilted it will be given an additional move in the direction that it is facing. */
 const bombDrop = () => {
 	const bombs = document.querySelectorAll('.bomb');
 	for (let i = 0; i < bombs.length; i++) {
@@ -327,13 +334,14 @@ const bombDrop = () => {
 	}
 }
 
-
+/* Runs constantly on an interval. Generates a number between 725 and 900 (the height of the grass area), if a bomb is within this area when the function is executed, it will explode.
+	To ensure that all of the explosions look the same, if the bomb has been tilted the explosion is set to appear upright. Once the bomb is exploded a cleanup function is set on a timeout,
+	to stop the explosions from never being removed. The number of bombs that have exploded is also tracked to control the levelling system */
 const bombExplode = () => {
 	const bombs = document.querySelectorAll('.bomb');
 	randomNumber = getRandomNumber(725, 900);
 	for (let i = 0; i < bombs.length; i++) {
 		const bombTop = bombs[i].offsetTop;
-		const sky = document.elementFromPoint(bombTop, bombs[i].offsetLeft);
 		if (bombTop >= randomNumber) {
 			if (bombs[i].hasAttribute("tiltedLeft") || bombs[i].hasAttribute("tiltedRight")) {
 				noTilt = bombs[i].style.transform = "rotate(360deg)";
@@ -353,7 +361,9 @@ const bombExplode = () => {
 
 }
 
-
+/* Once this function has been called, the level variable is increased, meaning each level will have additional bombs dropped, for example level 1 will have 10 bombs, level 2 will have 20 and so on.
+	The level tag is updated to reflect the new level and the trackers for the number of bombs dropped and exploded is reset. The variables used to control the speed and drop rate of the bombs are reduced
+	to make each subsequent level harder, this creates a potentially infinite number of levels */
 const increaseLevel = () => {
 	level++
 	const levelTag = document.querySelector('.level');
@@ -368,14 +378,8 @@ const increaseLevel = () => {
 	
 }
 
-
+//Loads on start and adds event listeners to the functions that require them
 const myLoadFunction = () => {
-	const bomb = document.querySelectorAll('.bomb');
-	for (let i = 0; i < bomb.length; i++) {
-		const bombLeft = bomb[i].offsetLeft;							//Sets the bombs to a random position
-		const randomLeft = Math.floor(Math.random() * 1920);
-		bomb[i].style.left = bombLeft + randomLeft + 'px';
-	}
 	const start = document.querySelector('.start');
 	start.addEventListener('click', startGame);
 	document.addEventListener('keydown', keydown);
