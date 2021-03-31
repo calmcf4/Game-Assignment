@@ -147,8 +147,10 @@ const playerHit = () => {
 
 	if (explosion.classList.contains('explosion')) {
 		playerHealth -= 1;
+		console.log(`Player has ${playerHealth} lives remaining`);
 		life[counter].style.opacity = 0;
 		counter++;
+
 
 	}
 
@@ -312,7 +314,6 @@ const bombCreate = () => {
 	randomLeft = getRandomNumber(0, 1920);
 	bomb.style.left = bombLeft + randomLeft + 'px';
 	bombsDropped++;
-	console.log(bombsDropped);
 	if (bombsDropped == level * 10) {
 		clearInterval(createBomb);
 	}
@@ -375,6 +376,7 @@ const increaseLevel = () => {
 	createBomb = setInterval(bombCreate, dropRate);
 	dropBomb = setInterval(bombDrop, speed);
 	explodeBomb = setInterval(bombExplode, 200);
+	console.log(`Now Starting level ${level}. Drop rate is ${dropRate} and bomb speed is ${speed}`);
 	
 }
 
